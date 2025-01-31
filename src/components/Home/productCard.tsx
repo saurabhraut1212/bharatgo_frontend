@@ -6,6 +6,7 @@ interface Product {
   price: number;
   images: string[];
   category: { name: string };
+  quantity:number;
 }
 
 interface ProductCardProps {
