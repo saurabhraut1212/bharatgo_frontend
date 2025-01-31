@@ -4,13 +4,14 @@ import SearchBar from "./SearchBar";
 import ProductCard from "./productCard";
 import ProductModal from "./ProductModal";
 
-
+// Include quantity in the Product interface
 interface Product {
   id: number;
   title: string;
   price: number;
   images: string[];
   category: { name: string };
+  quantity: number; // Add quantity to the Product interface
 }
 
 const Home: React.FC = () => {
