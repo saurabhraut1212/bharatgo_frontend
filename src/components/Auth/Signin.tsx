@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { signIn } from "../../services/auth/auth.service";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast"; 
-import { Link } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom"; 
+import { useAuth } from "../../context/AuthContext";
+
 
 interface FormData {
   email: string;
@@ -10,14 +11,18 @@ interface FormData {
 }
 
 const SignIn: React.FC = () => {
+  const navigate=useNavigate();
+  const { signIn: handlSignIn } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
   const handleSignIn = async (data: FormData) => {
     setError(null);
     try {
-      await signIn(data.email, data.password);
+      const response=await handlSignIn(data.email, data.password);
+      console.log(response,"response in login")
       toast.success("Sign In Successful!");
+      navigate("/")
     } catch (error) {
       setError((error as Error).message);
       toast.error("Sign In failed! Please try again.");

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {  FaHeart, FaShoppingCart, FaUser, FaBars, FaPhone, FaTimes, FaSignInAlt } from "react-icons/fa";
+import {  FaShoppingCart, FaUser, FaBars, FaPhone, FaTimes, FaSignInAlt } from "react-icons/fa";
+import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";  // Import the useAuth hook
 
 const Navbar: React.FC = () => {
+  const { cart } = useCart();
+  const { isAuthenticated, logOut } = useAuth(); // Use the authentication hook to get the auth state and logout function
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const categories = [
     "All",
@@ -21,22 +24,15 @@ const Navbar: React.FC = () => {
     return category.toLowerCase().replace(/\s+/g, "-");
   };
 
+  const handleLogout = () => {
+    logOut(); // Call logOut from AuthContext
+  };
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold text-blue-600">MyShop</Link>
-
-        {/* Search Bar
-        <div className="hidden md:flex items-center border rounded-lg overflow-hidden">
-         
-         <h1 className="px-4 py-3 bg-gray-100 border-r">Search</h1>
-          <input type="text" placeholder="I'm shopping for..." className="px-4 py-2 w-80 outline-none" />
-          <button className="bg-blue-600 px-4 py-4 text-white">
-            <FaSearch />
-          </button>
-        </div> */}
 
         {/* Contact & Icons */}
         <div className="hidden md:flex items-center space-x-6">
@@ -52,7 +48,7 @@ const Navbar: React.FC = () => {
                 <Link to="/profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</Link>
                 <Link to="/orders" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">Orders</Link>
                 <button 
-                  onClick={() => setIsAuthenticated(false)} 
+                  onClick={handleLogout} 
                   className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
                 >
                   Logout
@@ -66,13 +62,13 @@ const Navbar: React.FC = () => {
             </Link>
           )}
 
-          <Link to="/wishlist" className="relative cursor-pointer">
-            <FaHeart className="text-xl" />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">3</span>
-          </Link>
           <Link to="/cart" className="relative cursor-pointer">
             <FaShoppingCart className="text-xl" />
-            <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-1 rounded-full">1</span>
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-1 rounded-full">
+                {cart.length}
+              </span>
+            )}
           </Link>
         </div>
 
@@ -87,7 +83,6 @@ const Navbar: React.FC = () => {
         <div className="md:hidden bg-gray-100 py-3">
           <div className="flex flex-col items-center space-y-4">
             {categories.map((item, index) => {
-              // Handle special case for News & Blogs and Contact Us
               if (item === "News & Blogs") {
                 return (
                   <Link 
@@ -120,8 +115,9 @@ const Navbar: React.FC = () => {
                 );
               }
             })}
+
             {!isAuthenticated && (
-              <Link to="/login" className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-4">Login</Link>
+              <Link to="/signin" className="bg-blue-600 text-white px-4 py-2 rounded-lg mt-4">Login</Link>
             )}
           </div>
         </div>
@@ -131,7 +127,6 @@ const Navbar: React.FC = () => {
       <div className="hidden md:block bg-gray-100 py-2">
         <div className="container mx-10 flex items-center space-x-15">
           {categories.map((item, index) => {
-            // Handle special case for News & Blogs and Contact Us
             if (item === "News & Blogs") {
               return (
                 <Link 

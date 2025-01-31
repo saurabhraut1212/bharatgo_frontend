@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { signUp } from "../../services/auth/auth.service";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast"; 
-import { Link } from "react-router-dom";  
+import { Link, useNavigate } from "react-router-dom";  
+import { useAuth } from "../../context/AuthContext";
+
 
 interface FormData {
   email: string;
@@ -10,13 +11,20 @@ interface FormData {
 }
 
 const Signup: React.FC = () => {
+  const navigate=useNavigate();
+  const { signUp: handleSignUp } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
   const handleSignup = async (data: FormData) => {
     setError(null);
     try {
-      await signUp(data.email, data.password);
+      const response=await handleSignUp(data.email, data.password);
+     
+if (response && response.user) { // This was failing because handleSignUp had no return
+  toast.success("Signup Successful!"); 
+  navigate("/"); 
+}
       toast.success("Signup Successful!"); 
     } catch (error) {
       setError((error as Error).message);

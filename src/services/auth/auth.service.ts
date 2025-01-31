@@ -15,7 +15,7 @@ interface AuthResponse {
 export const signUp = async (email: string, password: string): Promise<AuthResponse> => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    console.log(userCredential.user,"data")
+    
     return { user: userCredential.user };
   } catch (error) {
     throw new Error((error as Error).message);
@@ -26,6 +26,7 @@ export const signUp = async (email: string, password: string): Promise<AuthRespo
 export const signIn = async (email: string, password: string): Promise<AuthResponse> => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log(userCredential,"userCredential")
     return { user: userCredential.user };
   } catch (error) {
     throw new Error((error as Error).message);
